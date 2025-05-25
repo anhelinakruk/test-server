@@ -37,18 +37,27 @@ pub struct LocalisedDescription {
 #[derive(Serialize)]
 pub struct Transaction {
     pub id: String,
+    #[serde(rename = "registeredIdentityId")]
     pub registered_identity_id: String,
+    #[serde(rename = "legId")]
     pub leg_id: String,
+    #[serde(rename = "groupKey")]
     pub group_key: String,
     #[serde(rename = "type")]
     pub transaction_type: String,
     pub state: String,
+    #[serde(rename = "startedDate")]
     pub started_date: i64,
+    #[serde(rename = "updatedDate")]
     pub updated_date: i64,
+    #[serde(rename = "completedDate")]
     pub completed_date: i64,
+    #[serde(rename = "createdDate")]
     pub created_date: i64,
     pub currency: String,
+    #[serde(rename = "amount")]
     pub amount: i64,
+    #[serde(rename = "amountWithCharges")]
     pub amount_with_charges: i64,
     pub fee: i64,
     pub balance: i64,
@@ -62,5 +71,6 @@ pub struct Transaction {
     pub recallable: bool,
     pub rate: i64,
     pub recipient: Recipient,
+    #[serde(rename = "localisedDescription")]
     pub localised_description: LocalisedDescription,
 }

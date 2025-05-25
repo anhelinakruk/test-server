@@ -1,5 +1,17 @@
-use axum::{Json, Router, extract::Path, http::HeaderMap, response::IntoResponse, routing::get};
+use std::convert::Infallible;
+
+use axum::{
+    Router,
+    body::{Body, Bytes},
+    extract::Path,
+    http::{HeaderMap, HeaderValue},
+    response::IntoResponse,
+    routing::get,
+};
+use futures::stream;
+use hyper::{Response, StatusCode};
 use models::{Account, LocalisedDescription, LocalisedDescriptionParam, Recipient, Transaction};
+use serde_json::json;
 
 pub mod models;
 
@@ -73,7 +85,28 @@ pub async fn get_retail_transaction(
         },
     }];
 
-    (axum::http::StatusCode::OK, Json(response))
+    let data = json!(response).to_string().into_bytes();
+
+    let stream = stream::once(async move { Ok::<_, Infallible>(Bytes::from(data)) });
+
+    let mut response = Response::builder()
+        .status(StatusCode::OK)
+        .body(Body::from_stream(stream))
+        .unwrap();
+
+    let headers = response.headers_mut();
+
+    headers.insert(
+        "date",
+        HeaderValue::from_static("Sat, 24 May 2025 19:05:25 GMT"),
+    );
+    headers.insert(
+        "content-type",
+        HeaderValue::from_static("application/json;charset=utf-8"),
+    );
+    *response.status_mut() = StatusCode::OK;
+
+    response
     // } else {
     //     (
     //         axum::http::StatusCode::BAD_REQUEST,
